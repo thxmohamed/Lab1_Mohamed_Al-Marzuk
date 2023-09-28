@@ -1,5 +1,6 @@
 #lang racket
 
+(provide (all-defined-out))
 
 #|
 RF2: TDA Option (Constructor)
@@ -18,7 +19,7 @@ flujo del chatbot, y por ultimo una lista con las palabras claves asociadas al c
 #|
 Función de pertenencia del TDA Option
 
-Dominio: option
+Dominio: cualquier dato
 Recorrido: booleano
 Descripción: se comprueba si un dato es una opción, viendo si cumple con la misma estructura
 de la opcion
@@ -31,7 +32,7 @@ de la opcion
 #|
 Dominio: option
 Recorrido: int
-Descripción: función que entrega el id de la opcion
+Descripción: función slectora que entrega el id de la opcion
 |#
 
 (define (option-get-id op)
@@ -40,7 +41,7 @@ Descripción: función que entrega el id de la opcion
 #|
 Dominio: option
 Recorrido: list
-Descripción: función que entrega una lista con las palabras claves de la opcion
+Descripción: función selectora que entrega una lista con las palabras claves de la opcion
 |#
 
 (define (get-keywords op)

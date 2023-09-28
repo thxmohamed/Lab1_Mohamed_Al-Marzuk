@@ -1,3 +1,7 @@
+#lang racket
+
+(provide (all-defined-out))
+
 #|
 RF5: TDA Chatbot (Constructor)
 
@@ -21,3 +25,12 @@ Descripción: Función de pertenencia del TDA Chatbot, para comprobar si un es o
 (define (chatbot? cb)
   (and (= (length cb) 5) (integer? (car cb)) (string? (cadr cb)) (string? (caddr cb))
        (integer? (cadddr cb)) (list? (last cb))))
+
+#|
+Dominio: Chatbot
+Recorrido: booleano
+Descripción: Función que comprueba si en una lista de flows de un chatbot se repite algun ID
+|#
+
+(define (id-repetido? id flows)
+  (not (null? (filter (lambda (flow) (= id (car flow))) flows))))
