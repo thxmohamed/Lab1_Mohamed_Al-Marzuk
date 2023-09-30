@@ -6,7 +6,7 @@
 RF2: TDA Option (Constructor)
 
 Dominio: code (Int) X message (String)  X ChatbotCodeLink (Int) X InitialFlowCodeLink (Int) X Keywords* (lista de palabras claves)
-Recorrido: option (lista con todos los elementos del dominio
+Recorrido: option (lista con todos los elementos del dominio)
 Tipo de algoritmo: Ninguno en específico
 Descripción: Función que construye una lista, compuesta por: numero de la opcion, opción, codigo del chatbot
 flujo del chatbot, y por ultimo una lista con las palabras claves asociadas al chatbot
@@ -32,7 +32,7 @@ de la opcion
 #|
 Dominio: option
 Recorrido: int
-Descripción: función slectora que entrega el id de la opcion
+Descripción: función selectora que entrega el id de la opcion
 |#
 
 (define (option-get-id op)
@@ -44,5 +44,5 @@ Recorrido: list
 Descripción: función selectora que entrega una lista con las palabras claves de la opcion
 |#
 
-(define (get-keywords op)
+(define (option-get-keywords op)
   (last op))
