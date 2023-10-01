@@ -29,7 +29,7 @@ Descripción: Función de pertenencia del TDA Chatbot, para comprobar si un es o
 #|
 Dominio: Chatbot
 Recorrido: booleano
-Descripción: Función que comprueba si en una lista de flows de un chatbot se repite algun ID
+Descripción: Función de pertenencia que comprueba si en una lista de flows de un chatbot se repite algun ID
 |#
 
 (define (id-repetido? id flows)
@@ -58,5 +58,31 @@ LA función exterior se llama con el chatbot y una lista que tenga como unico el
                    (append (list (car (last chatbot))) list-flow))                          
                           chatbot)))
   (add-flow2 chatbot (list flow)))
+
+#|
+Dominio: Chatbot
+Recorrido: string
+Descripción: Función selectora que entrega el mensaje de bienvenida de un chatbot
+|#
+
+(define (chatbot-get-msg cb)
+  (caddr cb))
+
+#|
+Dominio: Chatbot
+Recorrido: int
+Descripción: Función selectora que entrega elID de un chatbot
+|#
+
+(define chatbot-get-id car)
+
+#|
+Dominio: Chatbot
+Recorrido: string
+Descripción: Función selectora que entrega el nombre de un chatbot
+|#
+
+(define (chatbot-get-name cb)
+  (cadr cb))
 
 

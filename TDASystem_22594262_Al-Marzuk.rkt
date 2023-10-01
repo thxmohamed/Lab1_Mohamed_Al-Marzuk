@@ -1,5 +1,7 @@
 #lang racket
 
+(require "TDAChatbot_22594262_Al-Marzuk.rkt")
+
 (provide (all-defined-out))
 
 #|
@@ -38,7 +40,6 @@ Recorrido: lista de chat-historys
 Descripción: función selectora que entrega una lista con el chat-history del usuario
 |#
 
-
 (define (system-get-chat-history system)
   (car (cddddr system)))
 
@@ -48,7 +49,6 @@ Recorrido: lista de users (solo uno, o lista vacía si no hay nadie loggeado)
 Descripción: función selectora que entrega una lista con el unico usuario loggeado
 |#
 
-
 (define system-get-logged-user cadddr)
 
 #|
@@ -57,6 +57,22 @@ Recorrido: lista de chatbots
 Descripción: función selectora que entrega una lista con todos los chatbots del sistema
 |#
 
-
 (define (system-get-chatbots system)
   (last system))
+
+#|
+RF8: TDA System (modificador)
+
+Dominio: system X chatbot
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que agrega un chatbot a un sistema, siempre y cuando su id no se repita.
+Se utiliza la función id-repetido? para comprobar si el id ya está dentro del sistema
+|#
+
+(define (system-add-chatbot system chatbot)
+  (if (null? (last system))
+      (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cons chatbot (last system)))
+      (if (id-repetido? (car chatbot) (last system))
+          system
+          (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cons chatbot (last system))))))
