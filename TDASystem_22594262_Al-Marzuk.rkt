@@ -7,7 +7,7 @@
 #|
 RF7: TDA System (Constructor)
 
-Dominio: name (strint) X ID Chatbot Inicial (int)  X Chatbots (lista)
+Dominio: name (string) X ID Chatbot Inicial (int)  X Chatbots (lista)
 Recorrido: system (lista con todos los elementos del dominio)
 Tipo de algoritmo: Ninguno en específico
 Descripción: Función que construye una lista, compuesta por: nombre del sistema
@@ -67,7 +67,8 @@ Dominio: system X chatbot
 Recorrido: system
 Tipo de algoritmo: Ninguno en específico
 Descripción: Funcion que agrega un chatbot a un sistema, siempre y cuando su id no se repita.
-Se utiliza la función id-repetido? para comprobar si el id ya está dentro del sistema
+Se utiliza la función id-repetido? para comprobar si el id ya está dentro del sistema, si lo está,
+devuelve el mismo sistema sin cambios, y si no lo está, agrega el chatbot al sistema.
 |#
 
 (define (system-add-chatbot system chatbot)
@@ -76,3 +77,20 @@ Se utiliza la función id-repetido? para comprobar si el id ya está dentro del 
       (if (id-repetido? (car chatbot) (last system))
           system
           (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cons chatbot (last system))))))
+
+#|
+RF9: TDA System (modificador)
+
+Dominio: system X user (string)
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que agrega un user a un sistema, siempre y cuando no esté ya dentro del sistema.
+Se utiliza la función member para comprobar si el usuario ya está registrado, si es así, devuelve
+el mismo sistema, y si no, devuelve el sistema, pero con el usuario nuevo registrado.
+|#
+
+(define (system-add-user system user)
+  (if (member user (caddr system))
+      system
+      (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system) (car (cddddr system)) (last system))))
+
