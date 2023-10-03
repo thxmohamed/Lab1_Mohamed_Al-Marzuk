@@ -61,15 +61,6 @@ LA función exterior se llama con el chatbot y una lista que tenga como unico el
 
 #|
 Dominio: Chatbot
-Recorrido: string
-Descripción: Función selectora que entrega el mensaje de bienvenida de un chatbot
-|#
-
-(define (chatbot-get-msg cb)
-  (caddr cb))
-
-#|
-Dominio: Chatbot
 Recorrido: int
 Descripción: Función selectora que entrega elID de un chatbot
 |#
@@ -79,10 +70,29 @@ Descripción: Función selectora que entrega elID de un chatbot
 #|
 Dominio: Chatbot
 Recorrido: string
+Descripción: Función selectora que entrega el mensaje de bienvenida de un chatbot
+|#
+
+(define (chatbot-get-msg cb)
+  (caddr cb))
+
+
+#|
+Dominio: Chatbot
+Recorrido: string
 Descripción: Función selectora que entrega el nombre de un chatbot
 |#
 
 (define (chatbot-get-name cb)
   (cadr cb))
+
+#|
+Dominio: Chatbot
+Recorrido: flow list
+Descripción: Función selectora que entrega una lista de flows
+|#
+
+(define (chatbot-get-flows cb)
+  (last cb))
 
 

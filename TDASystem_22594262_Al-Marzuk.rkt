@@ -35,6 +35,17 @@ del system
   (and (= (length s) 5) (string? (car s)) (integer? (cadr s)) (list? (caddr s)) (list? (cadddr s)) (list? (last s))))
 
 #|
+Función constructora de chat-history
+
+Dominio: time (int) x sender (string) x msg (string)
+Recorrido: chat-history 
+Descripción: Función que construye una lista con los elementos del dominio.
+|#
+
+(define (chat-history time sender msg)
+  (list time sender msg))
+
+#|
 Dominio: system
 Recorrido: lista de chat-historys
 Descripción: función selectora que entrega una lista con el chat-history del usuario
@@ -93,4 +104,6 @@ el mismo sistema, y si no, devuelve el sistema, pero con el usuario nuevo regist
   (if (member user (caddr system))
       system
       (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system) (car (cddddr system)) (last system))))
+
+
 
