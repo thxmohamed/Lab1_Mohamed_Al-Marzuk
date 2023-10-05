@@ -44,3 +44,13 @@ Descripción: Función que agrega un option a un flow. No se agrega si la opció
       (if (and (id-repetido? (car option) (last flow)) (flow? flow) (option? option))
           flow 
           (list (car flow) (cadr flow) (cons option (caddr flow))))))
+
+#|
+Dominio: Flow
+Recorrido: list options
+Descripción: Función selectora del TDA Flow que entrega todas las opciones que tiene un flow
+|#
+
+(define (flow-get-options flow)
+  (last flow))
+
