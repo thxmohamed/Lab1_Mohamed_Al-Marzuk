@@ -105,5 +105,21 @@ el mismo sistema, y si no, devuelve el sistema, pero con el usuario nuevo regist
       system
       (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system) (car (cddddr system)) (last system))))
 
+#|
+RF10: TDA System (modificador)
+
+Dominio: system X user (string)
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que logea un user a un sistema, siempre y cuando no haya nadie logeado, y
+este esté registrado en el sistema
+|#
+
+(define (system-login system user)
+  (if (and (member user (caddr system)) (null? (cadddr system)))
+      (list (car system) (cadr system) (caddr system) (append (cadddr system) (list user))
+            (car (cddddr system)) (last system))
+      system))
+
 
 
