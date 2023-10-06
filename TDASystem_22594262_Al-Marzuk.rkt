@@ -84,10 +84,12 @@ devuelve el mismo sistema sin cambios, y si no lo está, agrega el chatbot al si
 
 (define (system-add-chatbot system chatbot)
   (if (null? (last system))
-      (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cons chatbot (last system)))
+      (list (car system) (cadr system) (caddr system)
+            (cadddr system) (car (cddddr system)) (cons chatbot (last system)))
       (if (id-repetido? (car chatbot) (last system))
           system
-          (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cons chatbot (last system))))))
+          (list (car system) (cadr system) (caddr system)
+                (cadddr system) (car (cddddr system)) (cons chatbot (last system))))))
 
 #|
 RF9: TDA System (modificador)
@@ -103,7 +105,8 @@ el mismo sistema, y si no, devuelve el sistema, pero con el usuario nuevo regist
 (define (system-add-user system user)
   (if (member user (caddr system))
       system
-      (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system) (car (cddddr system)) (last system))))
+      (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system)
+            (append (car (cddddr system)) (list (list user))) (last system))))
 
 #|
 RF10: TDA System (modificador)
@@ -120,6 +123,18 @@ este esté registrado en el sistema
       (list (car system) (cadr system) (caddr system) (append (cadddr system) (list user))
             (car (cddddr system)) (last system))
       system))
+
+#|
+RF11: TDA System (modificador)
+
+Dominio: system
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que deslogea a un usuario del sistema
+|#
+(define (system-logout system)
+  (list (car system) (cadr system) (caddr system) '() (car (cddddr system)) (last system)))
+
 
 
 
