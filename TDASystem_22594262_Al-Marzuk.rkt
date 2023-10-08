@@ -1,6 +1,7 @@
 #lang racket
 
 (require "TDAChatbot_22594262_Al-Marzuk.rkt")
+(require "TDAOption_22594262_Al-Marzuk.rkt")
 
 (provide (all-defined-out))
 
@@ -60,7 +61,10 @@ Recorrido: lista de users (solo uno, o lista vacía si no hay nadie loggeado)
 Descripción: función selectora que entrega una lista con el unico usuario loggeado
 |#
 
-(define system-get-logged-user cadddr)
+(define (system-get-logged-user system)
+  (if (null? (cadddr system))
+      '()
+      (car (cadddr system))))
 
 #|
 Dominio: system
@@ -70,6 +74,25 @@ Descripción: función selectora que entrega una lista con todos los chatbots de
 
 (define (system-get-chatbots system)
   (last system))
+
+#|
+Dominio: system
+Recorrido: lista de chathistory
+Descripción: función selectora que entrega una lista con todos los chathistory de cada usuario del sistema
+|#
+
+(define system-get-register-user caddr)
+
+#|
+Dominio: lista, índice (int), valor
+Recorrido: lista
+Descripción: función auxiliar que modifica un elemento de la lista según su índice
+|#
+
+(define (modificador lista i value)
+  (if (= i 0)
+      (cons value (cdr lista)) ; Modificar el primer elemento
+      (cons (car lista) (modificador (cdr lista) (- i 1) value))))
 
 #|
 RF8: TDA System (modificador)
@@ -134,6 +157,77 @@ Descripción: Funcion que deslogea a un usuario del sistema
 |#
 (define (system-logout system)
   (list (car system) (cadr system) (caddr system) '() (car (cddddr system)) (last system)))
+
+#|
+Dominio: system
+Recorrido: lista de keywords list
+Tipo de recursión: de cola
+Descripción: Funcion selectora que utiliza recursión de cola para acceder a todas las keywords del system.
+La idea era utilizar esta función para el RF12 pero no supe cómo.
+|#
+
+(define (system-get-key-list system)
+  (define (key-cola system key-list)
+    (if (null? (system-get-chatbots system))
+        key-list
+        (key-cola (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cdr (last system)))
+                  (append key-list (map option-get-keywords (last (last (last (car (last system))))))))))
+  (key-cola system '()))
+
+#|
+Dominio: msg X lista de keywordd list
+Recorrido: booleano
+Tipo de recursión: Natural
+Descripción: Funcion de pertenencia que utiliza recursión Natural para determinar si un mensaje es una keyword.
+Esta función estaba planeada para el RF12.
+|#
+
+(define (msg-is-keyword? msg key-list)
+  (if (null? key-list)
+      #f
+      (if (member msg (car key-list))
+          #t
+          (msg-is-keyword? msg (cdr key-list)))
+      ))
+
+#|
+Dominio: msg (string) X system
+Recorrido: keywords list
+Tipo de recursión: de cola
+Descripción: Funcion selectora que utiliza recursión de cola para acceder a la lista de keywords
+que contenga un mensaje. Al igual que la anterior, era para utilizarla en el RF12.
+|#
+
+(define (system-get-key-list2 msg system)
+  (define (cola2 msg aux-list)
+    (if (and (not (null? (cdr aux-list))) (member msg (car aux-list)))
+        (car aux-list)
+        (cola2 msg (cdr aux-list))))
+  (if (msg-is-keyword? msg (system-get-key-list system))
+      (cola2 msg (system-get-key-list system))
+      '()))
+
+#|
+RF12: TDA System (modificador)
+
+Dominio: system X msg (string)
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que sirve para hablar con un chatbot de forma recursiva. No funciona correctamente.
+|#
+
+(define (system-talk-rec system msg)
+  (define (cola2 user sys chathistory n)
+    (if (null? (system-get-chat-history sys))
+        (list (car sys) (cadr sys) (caddr sys) (cadddr sys) chathistory (last sys))
+        (if (equal? user (caar (system-get-chat-history sys)))
+            (list (car system) (cadr system) (caddr system) (cadddr system)
+                  (modificador (car (cddddr system)) n (append (list user (chat-history (current-seconds) user msg)) (cdr (list-ref (car (cddddr system)) n)))) (last system))
+            (cola2 user (list (car sys) (cadr sys) (caddr sys) (cadddr sys) (cdr (car (cddddr sys))) (last sys))
+                   (append chathistory (caar (cddddr sys))) (+ n 1)))))
+  (if (null? (system-get-logged-user system))
+      system
+      (cola2 (system-get-logged-user system) system '() 0)))
 
 
 
