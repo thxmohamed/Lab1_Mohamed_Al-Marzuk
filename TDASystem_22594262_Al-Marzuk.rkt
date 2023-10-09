@@ -1,7 +1,8 @@
 #lang racket
 
 (require "TDAChatbot_22594262_Al-Marzuk.rkt")
-(require "TDAOption_22594262_Al-Marzuk.rkt")
+(require "TDAFlow_22594262_Al-Marzuk.rkt")
+(require "TDAChatHistory_22594262_Al-Marzuk.rkt")
 
 (provide (all-defined-out))
 
@@ -34,17 +35,6 @@ del system
 
 (define (system? s)
   (and (= (length s) 5) (string? (car s)) (integer? (cadr s)) (list? (caddr s)) (list? (cadddr s)) (list? (last s))))
-
-#|
-Función constructora de chat-history
-
-Dominio: time (int) x sender (string) x msg (string)
-Recorrido: chat-history 
-Descripción: Función que construye una lista con los elementos del dominio.
-|#
-
-(define (chat-history time sender msg)
-  (list time sender msg))
 
 #|
 Dominio: system
@@ -129,7 +119,7 @@ el mismo sistema, y si no, devuelve el sistema, pero con el usuario nuevo regist
   (if (member user (caddr system))
       system
       (list (car system) (cadr system) (append (caddr system) (list user)) (cadddr system)
-            (append (car (cddddr system)) (list (list user))) (last system))))
+            (append (car (cddddr system)) (list (chat-history user))) (last system))))
 
 #|
 RF10: TDA System (modificador)
@@ -163,7 +153,6 @@ Dominio: system
 Recorrido: lista de keywords list
 Tipo de recursión: de cola
 Descripción: Funcion selectora que utiliza recursión de cola para acceder a todas las keywords del system.
-La idea era utilizar esta función para el RF12 pero no supe cómo.
 |#
 
 (define (system-get-key-list system)
@@ -171,7 +160,7 @@ La idea era utilizar esta función para el RF12 pero no supe cómo.
     (if (null? (system-get-chatbots system))
         key-list
         (key-cola (list (car system) (cadr system) (caddr system) (cadddr system) (car (cddddr system)) (cdr (last system)))
-                  (append key-list (map option-get-keywords (last (last (last (car (last system))))))))))
+                  (append key-list (chatbot-get-key-list (car (last system)))))))
   (key-cola system '()))
 
 #|
@@ -179,7 +168,6 @@ Dominio: msg X lista de keywordd list
 Recorrido: booleano
 Tipo de recursión: Natural
 Descripción: Funcion de pertenencia que utiliza recursión Natural para determinar si un mensaje es una keyword.
-Esta función estaba planeada para el RF12.
 |#
 
 (define (msg-is-keyword? msg key-list)
@@ -195,7 +183,7 @@ Dominio: msg (string) X system
 Recorrido: keywords list
 Tipo de recursión: de cola
 Descripción: Funcion selectora que utiliza recursión de cola para acceder a la lista de keywords
-que contenga un mensaje. Al igual que la anterior, era para utilizarla en el RF12.
+que contenga un mensaje. Esta función era para ser utilizada en el RF12 pero no supe cómo.
 |#
 
 (define (system-get-key-list2 msg system)
@@ -208,12 +196,29 @@ que contenga un mensaje. Al igual que la anterior, era para utilizarla en el RF1
       '()))
 
 #|
+Dominio: msg (string) X system
+Recorrido: option list
+Descripción: Funcion selectora que sirve para acceder a las opciones según la keyword.
+|#
+
+(define (system-specific-chatbot msg system)
+  (define chatbots (system-get-chatbots system))
+  (if (null? chatbots)
+      null
+      (car (filter (lambda (x) (not (equal? x null))) (map (lambda (cb) (chatbot-specific-flow msg cb)) chatbots)))))
+
+#|
 RF12: TDA System (modificador)
 
 Dominio: system X msg (string)
 Recorrido: system
-Tipo de algoritmo: Ninguno en específico
-Descripción: Funcion que sirve para hablar con un chatbot de forma recursiva. No funciona correctamente.
+Tipo de recursion: Recursion de cola
+Descripción: Funcion que sirve para hablar con un chatbot de forma recursiva. Recibe un system y un mensaje.
+Lo que hace es ver si hay un usuario logeado, si no lo hay, devuelve el mismo system sin ningún cambio, y si
+mensaje del usuario no es ninguna keyword que el sistema pueda reconocer, también devuelve el system sin
+cambios, y si el mensaje es una keyword, lo que hace es llamar a la función recursiva. Esta función lo que hace
+es recorrer el chat history hasta que este esté vacío, y va revisandolo hasta encontrar la lista que contiene
+el usuario logeado, cuando lo encuentra, agrega el mensaje del chatbot y el mensaje del usuario.
 |#
 
 (define (system-talk-rec system msg)
@@ -222,12 +227,48 @@ Descripción: Funcion que sirve para hablar con un chatbot de forma recursiva. N
         (list (car sys) (cadr sys) (caddr sys) (cadddr sys) chathistory (last sys))
         (if (equal? user (caar (system-get-chat-history sys)))
             (list (car system) (cadr system) (caddr system) (cadddr system)
-                  (modificador (car (cddddr system)) n (append (list user (chat-history (current-seconds) user msg)) (cdr (list-ref (car (cddddr system)) n)))) (last system))
+                  (modificador (car (cddddr system)) n (append (list user (chat-msg (current-seconds) user msg)) (system-specific-chatbot msg system) (cdr (list-ref (car (cddddr system)) n)))) (last system))
             (cola2 user (list (car sys) (cadr sys) (caddr sys) (cadddr sys) (cdr (car (cddddr sys))) (last sys))
                    (append chathistory (caar (cddddr sys))) (+ n 1)))))
   (if (null? (system-get-logged-user system))
       system
-      (cola2 (system-get-logged-user system) system '() 0)))
+      (if (not (msg-is-keyword? msg (system-get-key-list system)))
+          system
+          (cola2 (system-get-logged-user system) system '() 0))))
+
+#|
+RF13: TDA System (modificador)
+
+Dominio: system X msg (string)
+Recorrido: system
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que sirve para hablar con un chatbot de forma no recursiva. No funciona correctamente.
+Solamente agrega los mensajes del usuario al chat history.
+|#
+
+(define (system-talk-norec system msg)
+  (define user (system-get-logged-user system))
+  (if (null? user)
+      system      
+      (list (car system) (cadr system) (caddr system) (cadddr system)
+            (add-chat-history user msg (car (cddddr system))) (last system))))
+
+#|
+RF14: TDA System (modificador)
+
+Dominio: system X user (string)
+Recorrido: string
+Tipo de algoritmo: Ninguno en específico
+Descripción: Funcion que sirve para acceder al chat-history de un usuario en específico.
+Primero se comprueba si el usuario está registrado, si no es así, devuelve un mensaje de error,
+y si está registrado, devuelve la lista de su chat history, utilizando la función filter en
+base al nombre del usuario.
+|#
+
+(define (system-synthesis system user)
+  (if (not (member user (system-get-register-user system)))
+      (display "No hay ningún chat history para ese usuario")
+      (write (reverse (cdr (car (filter (lambda (sub2) (equal? user (car sub2))) (system-get-chat-history system))))))))
 
 
 

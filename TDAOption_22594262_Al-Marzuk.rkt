@@ -46,3 +46,12 @@ Descripción: función selectora que entrega una lista con las palabras claves d
 
 (define (option-get-keywords op)
   (last op))
+
+#|
+Dominio: option
+Recorrido: string
+Descripción: función selectora que entrega el nombre de la opción
+|#
+
+(define (option-get-option op)
+  (cadr op))

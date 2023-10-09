@@ -1,5 +1,8 @@
 #lang racket
 
+(require "TDAFlow_22594262_Al-Marzuk.rkt")
+(require "TDAOption_22594262_Al-Marzuk.rkt")
+
 (provide (all-defined-out))
 
 #|
@@ -15,6 +18,7 @@ un mensaje de bienvenida, un id del flow inicial y una lista de flows asociados 
 (define (chatbot chatbotID name welcomeMessage startFlowID . flows)
   (define flows-sin-repetidos (remove-duplicates flows))
   (list chatbotID name welcomeMessage startFlowID flows-sin-repetidos))
+    
 
 #|
 Dominio: cualquier dato
@@ -25,15 +29,6 @@ Descripción: Función de pertenencia del TDA Chatbot, para comprobar si un es o
 (define (chatbot? cb)
   (and (= (length cb) 5) (integer? (car cb)) (string? (cadr cb)) (string? (caddr cb))
        (integer? (cadddr cb)) (list? (last cb))))
-
-#|
-Dominio: Chatbot
-Recorrido: booleano
-Descripción: Función de pertenencia que comprueba si en una lista de flows de un chatbot se repite algun ID
-|#
-
-(define (id-repetido? id flows)
-  (not (null? (filter (lambda (flow) (= id (car flow))) flows))))
 
 #|
 RF6: TDA Chatbot (Modificador)
@@ -62,7 +57,7 @@ LA función exterior se llama con el chatbot y una lista que tenga como unico el
 #|
 Dominio: Chatbot
 Recorrido: int
-Descripción: Función selectora que entrega elID de un chatbot
+Descripción: Función selectora que entrega el ID de un chatbot
 |#
 
 (define chatbot-get-id car)
@@ -94,5 +89,33 @@ Descripción: Función selectora que entrega una lista de flows
 
 (define (chatbot-get-flows cb)
   (last cb))
+
+#|
+Dominio: msg (string) X Chatbot
+Recorrido: option list
+Tipo de recursion: Ninguna
+Descripción: Función selectora que entrega una lista de opciones
+|#
+
+(define (chatbot-specific-flow msg cb)
+  (define flows (chatbot-get-flows cb))
+  (if (null? flows)
+      null
+      (filter (lambda (x) (not (equal? x null))) (map (lambda (f) (flow-specific-option msg f)) flows))))
+
+#|
+Dominio: Chatbot
+Recorrido: keyword list
+Tipo de recursion: de cola
+Descripción: Función selectora que entrega una lista de todas las keywords del chatbot
+|#
+
+(define (chatbot-get-key-list cb)
+  (define (key-cola cb key-list)
+    (if (null? (chatbot-get-flows cb))
+        key-list
+        (key-cola (list (car cb) (cadr cb) (caddr cb) (cadddr cb) (cdr (chatbot-get-flows cb)))
+                  (append key-list (map option-get-keywords (last (car (chatbot-get-flows cb))))))))
+  (key-cola cb '()))
 
 
