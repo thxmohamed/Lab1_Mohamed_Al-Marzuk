@@ -3,20 +3,6 @@
 (provide (all-defined-out))
 
 #|
-RF2: TDA Option (Constructor)
-
-Dominio: code (Int) X message (String)  X ChatbotCodeLink (Int) X InitialFlowCodeLink (Int) X Keywords* (lista de palabras claves)
-Recorrido: option (lista con todos los elementos del dominio)
-Tipo de algoritmo: Ninguno en específico
-Descripción: Función que construye una lista, compuesta por: numero de la opcion, opción, codigo del chatbot
-flujo del chatbot, y por ultimo una lista con las palabras claves asociadas al chatbot
-
-|#
-
-(define (option code text chatbot-code-link flow-code-link keyword . choices)
-  (list code text chatbot-code-link flow-code-link (append choices (list keyword))))
-
-#|
 Función de pertenencia del TDA Option
 
 Dominio: cualquier dato
