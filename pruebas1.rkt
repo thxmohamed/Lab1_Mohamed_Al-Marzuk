@@ -1,6 +1,6 @@
 #lang racket
 
-(require "main_22594262_Al-Marzuk.rkt")
+(require "main.rkt")
 
 (define op1 (option  1 "1) Comer" 2 1 "hambre" "comer" "comida"))
 (define op2 (option  2 "2) Trabajar" 3 1 "empleo" "trabajo" "trabajar"))

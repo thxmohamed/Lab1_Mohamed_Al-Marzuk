@@ -1,10 +1,10 @@
 #lang racket
 
-(require "TDAOption_22594262_Al-Marzuk.rkt")
-(require "TDAFlow_22594262_Al-Marzuk.rkt")
-(require "TDAChatBot_22594262_Al-Marzuk.rkt")
-(require "TDASystem_22594262_Al-Marzuk.rkt")
-(require "TDAChatHistory_22594262_Al-Marzuk.rkt")
+(require "TDAOption.rkt")
+(require "TDAFlow.rkt")
+(require "TDAChatbot.rkt")
+(require "TDASystem.rkt")
+(require "TDAChatHistory.rkt")
 
 (provide (all-defined-out))
 

@@ -1,6 +1,6 @@
 #lang racket
 
-(require "main_22594262_Al-Marzuk.rkt")
+(require "main.rkt")
 
 (provide (all-defined-out))
 

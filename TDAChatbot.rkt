@@ -1,7 +1,7 @@
 #lang racket
 
-(require "TDAFlow_22594262_Al-Marzuk.rkt")
-(require "TDAOption_22594262_Al-Marzuk.rkt")
+(require "TDAFlow.rkt")
+(require "TDAOption.rkt")
 
 (provide (all-defined-out))   
 
